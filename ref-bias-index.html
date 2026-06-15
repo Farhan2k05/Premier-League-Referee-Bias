@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPL Referee Bias - Farhan Islam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <style>
+
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Barlow", sans-serif;
+            background-color: #37003c;
+            color: #37003c;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Barlow Condensed", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+        }
+
+        /* Top Bar */
+        #top_bar {
+            background-color: #37003c;
+            padding: 0.85em 2em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #top_bar .site_name {
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            font-size: 1.3em;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        #top_bar .site_name span {
+            color: #00ff87;
+        }
+
+        #top_bar a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        #top_bar a:hover {
+            color: #00ff87;
+        }
+
+        /* Sticky Sub Navigation */
+        #sub_nav {
+            background-color: #2b002f;
+            border-top: 3px solid #00ff87;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            overflow-x: auto;
+        }
+
+        #sub_nav ul {
+            list-style: none;
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #sub_nav ul li a {
+            display: block;
+            color: #d6c6da;
+            text-decoration: none;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.92em;
+            letter-spacing: 0.03em;
+            padding: 0.9em 1.1em;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        #sub_nav ul li a:hover {
+            color: #ffffff;
+        }
+
+        #sub_nav ul li a.active {
+            color: #00ff87;
+            border-bottom-color: #00ff87;
+        }
+
+        /* Hero Section */
+        #hero {
+            background-color: #37003c;
+            color: #ffffff;
+            text-align: center;
+            padding: 3em 2em 5em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero_stripes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(0, 255, 135, 0.03) 0px,
+                rgba(0, 255, 135, 0.03) 60px,
+                transparent 60px,
+                transparent 120px
+            );
+            pointer-events: none;
+        }
+
+        #hero_inner {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #hero .tag {
+            display: inline-block;
+            background-color: #e90052;
+            color: #ffffff;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.08em;
+            padding: 0.35em 1em;
+            border-radius: 3px;
+            margin-bottom: 1.2em;
+        }
+
+        #hero h1 {
+            font-size: 3.4em;
+            font-weight: 800;
+            line-height: 0.98;
+            margin-bottom: 0.5em;
+        }
+
+        #hero h1 .mint {
+            color: #00ff87;
+        }
+
+        #hero p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #d6c6da;
+            max-width: 640px;
+            margin: 0 auto 2em;
+        }
+
+        /* Hero Stats Strip */
+        #hero_stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            overflow: hidden;
+            max-width: 580px;
+            margin: 0 auto 1.5em;
+        }
+
+        #hero_stats .stat_item {
+            flex: 1;
+            min-width: 120px;
+            padding: 1em 0.5em;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        #hero_stats .stat_item:last-child {
+            border-right: none;
+        }
+
+        #hero_stats .stat_number {
+            display: block;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            font-size: 2.2em;
+            color: #00ff87;
+            line-height: 1;
+        }
+
+        #hero_stats .stat_label {
+            display: block;
+            font-size: 0.72em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #b8a6bd;
+            margin-top: 0.3em;
+        }
+
+        /* Tech Tags */
+        #tech_tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.4em;
+        }
+
+        #tech_tags span {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #d6c6da;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.25em 0.7em;
+            border-radius: 3px;
+        }
+
+        /* Main Content Shell */
+        #content_shell {
+            background-color: #f2f2f2;
+            border-radius: 16px 16px 0 0;
+            margin-top: -2.5em;
+            position: relative;
+            padding: 2.5em 2em 1em;
+            z-index: 2;
+        }
+
+        #content_wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Explainer Box */
+        #explainer {
+            background-color: #ffffff;
+            border-left: 5px solid #e90052;
+            border-radius: 6px;
+            padding: 1.25em 1.5em;
+            margin-bottom: 2.5em;
+            box-shadow: 0 1px 4px rgba(55, 0, 60, 0.08);
+        }
+
+        #explainer p {
+            line-height: 1.6;
+            margin-bottom: 0.6em;
+            font-size: 0.95em;
+        }
+
+        #explainer p:last-child {
+            margin-bottom: 0;
+        }
+
+        #explainer strong {
+            color: #e90052;
+        }
+
+        /* Page Sections */
+        .page_section {
+            margin-bottom: 3em;
+            scroll-margin-top: 50px;
+        }
+
+        .section_header {
+            display: flex;
+            align-items: center;
+            gap: 0.6em;
+            margin-bottom: 1.2em;
+        }
+
+        .section_header .green_bar {
+            width: 6px;
+            height: 28px;
+            background-color: #00ff87;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section_header h2 {
+            font-size: 1.9em;
+            font-weight: 800;
+            color: #37003c;
+        }
+
+        .section_intro {
+            color: #555555;
+            line-height: 1.6;
+            margin-bottom: 1.5em;
+            margin-top: -0.6em;
+            font-size: 0.98em;
+        }
+
+        /* KPI Cards */
+        #kpi_row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.85em;
+            margin-bottom: 1.75em;
+        }
+
+        .kpi_card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 1.25em 1em;
+            text-align: center;
+            border-bottom: 4px solid #cccccc;
+            box-shadow: 0 1px 4px rgba(55, 0, 60, 0.08);
+        }
+
+        .kpi_card.positive {
+            border-bottom-color: #00c853;
+        }
+
+        .kpi_card.negative {
+            border-bottom-color: #e90052;
+        }
+
+        .kpi_card .kpi_value {
+            display: block;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            font-size: 2.1em;
+            line-height: 1;
+        }
+
+        .kpi_card.positive .kpi_value {
+            color: #00a344;
+        }
+
+        .kpi_card.negative .kpi_value {
+            color: #e90052;
+        }
+
+        .kpi_card .kpi_label {
+            display: block;
+            font-size: 0.74em;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #777777;
+            margin-top: 0.5em;
+            font-weight: 600;
+        }
+
+        /* White Cards */
+        .white_card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 1.5em;
+            box-shadow: 0 1px 4px rgba(55, 0, 60, 0.08);
+            margin-bottom: 1.25em;
+        }
+
+        .white_card h3 {
+            font-size: 1.3em;
+            color: #37003c;
+            margin-bottom: 0.2em;
+        }
+
+        .white_card .card_note {
+            font-size: 0.85em;
+            color: #888888;
+            margin-bottom: 1.2em;
+        }
+
+        /* Chart Containers */
+        .chart_container {
+            position: relative;
+            height: 320px;
+        }
+
+        .chart_container.small {
+            height: 220px;
+        }
+
+        /* Two Column Layout */
+        .two_columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25em;
+        }
+
+        /* Three Column Layout */
+        .three_columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.25em;
+        }
+
+        /* Leader Cards */
+        #leader_cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.85em;
+            margin-bottom: 1.5em;
+        }
+
+        .leader_card {
+            background-color: #37003c;
+            border-radius: 8px;
+            padding: 1.25em;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .leader_card::after {
+            content: "";
+            position: absolute;
+            right: -10px;
+            bottom: -10px;
+            width: 70px;
+            height: 70px;
+            background-color: #00ff87;
+            opacity: 0.12;
+            border-radius: 50%;
+        }
+
+        .leader_card .leader_rank {
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            font-size: 0.85em;
+            color: #00ff87;
+            letter-spacing: 0.05em;
+        }
+
+        .leader_card .leader_name {
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 700;
+            font-size: 1.5em;
+            margin: 0.15em 0;
+        }
+
+        .leader_card .leader_stat {
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            font-size: 2.2em;
+            color: #00ff87;
+            line-height: 1;
+        }
+
+        .leader_card .leader_sub {
+            font-size: 0.78em;
+            color: #c9b8cd;
+            margin-top: 0.3em;
+        }
+
+        /* Era Cards */
+        #era_cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.85em;
+            margin-bottom: 1.5em;
+        }
+
+        .era_card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(55, 0, 60, 0.08);
+            border: 1px solid #e6e6e6;
+        }
+
+        .era_card .era_top {
+            background-color: #37003c;
+            color: #ffffff;
+            padding: 0.7em 1em;
+        }
+
+        .era_card.ghost_game .era_top {
+            background-color: #e90052;
+        }
+
+        .era_card .era_top h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .era_card .era_years {
+            font-size: 0.72em;
+            color: #c9b8cd;
+            font-weight: 500;
+        }
+
+        .era_card.ghost_game .era_years {
+            color: #ffd6e3;
+        }
+
+        .era_card .era_body {
+            padding: 0.85em 1em;
+        }
+
+        .era_card .era_row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3em 0;
+            font-size: 0.9em;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .era_card .era_row:last-child {
+            border-bottom: none;
+        }
+
+        .era_card .era_row .row_label {
+            color: #888888;
+        }
+
+        .era_card .era_row .row_value {
+            font-weight: 700;
+            color: #37003c;
+        }
+
+        .row_value.positive {
+            color: #00a344;
+        }
+
+        .row_value.negative {
+            color: #e90052;
+        }
+
+        /* Compare Widget */
+        #compare_widget {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(55, 0, 60, 0.08);
+            overflow: hidden;
+        }
+
+        #compare_selectors {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            background-color: #37003c;
+        }
+
+        #compare_selectors select {
+            background-color: #37003c;
+            color: #ffffff;
+            border: none;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1.1em;
+            padding: 1em;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #compare_selectors .vs_label {
+            display: flex;
+            align-items: center;
+            padding: 0 1em;
+            color: #00ff87;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            font-size: 1.2em;
+        }
+
+        .compare_row {
+            display: grid;
+            grid-template-columns: 1fr 140px 1fr;
+            align-items: center;
+            padding: 0.9em 1.25em;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .compare_row:last-child {
+            border-bottom: none;
+        }
+
+        .compare_value {
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            font-size: 1.5em;
+        }
+
+        .compare_value.left_val {
+            text-align: right;
+        }
+
+        .compare_value.right_val {
+            text-align: left;
+        }
+
+        .compare_value.winner {
+            color: #00a344;
+        }
+
+        .compare_value.loser {
+            color: #999999;
+        }
+
+        .compare_label {
+            text-align: center;
+            font-size: 0.72em;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #888888;
+            font-weight: 600;
+        }
+
+        /* Audit Section Override */
+        #audit .white_card {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Referee Table */
+        #ref_table_wrap {
+            overflow-x: auto;
+        }
+
+        #ref_table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92em;
+        }
+
+        #ref_table thead th {
+            background-color: #37003c;
+            color: #00ff87;
+            text-align: left;
+            padding: 0.75em 0.85em;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.95em;
+            letter-spacing: 0.03em;
+        }
+
+        #ref_table tbody td {
+            padding: 0.55em 0.85em;
+            border-bottom: 1px solid #eeeeee;
+            color: #444444;
+        }
+
+        #ref_table tbody tr:nth-child(even) {
+            background-color: #faf7fb;
+        }
+
+        #ref_table tbody tr:hover {
+            background-color: #f0e6f2;
+        }
+
+        #ref_table tbody td:first-child {
+            font-weight: 600;
+            color: #37003c;
+        }
+
+        /* Mini Bias Bars */
+        .bias_bar_wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+
+        .bias_bar {
+            flex: 1;
+            height: 7px;
+            background-color: #eeeeee;
+            border-radius: 99px;
+            position: relative;
+            min-width: 80px;
+        }
+
+        .bias_bar .bar_fill {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            border-radius: 99px;
+        }
+
+        .bias_bar .bar_mid {
+            position: absolute;
+            left: 50%;
+            top: -2px;
+            width: 1px;
+            height: 11px;
+            background-color: #cccccc;
+        }
+
+        /* Verdict Badges */
+        .verdict_badge {
+            font-size: 0.72em;
+            font-weight: 700;
+            padding: 0.25em 0.7em;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .verdict_badge.home_bias {
+            background-color: #00ff87;
+            color: #37003c;
+        }
+
+        .verdict_badge.away_bias {
+            background-color: #e90052;
+            color: #ffffff;
+        }
+
+        .verdict_badge.neutral_verdict {
+            background-color: #e0e0e0;
+            color: #555555;
+        }
+
+        /* Dashboard Screenshots */
+        #screenshot_grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1em;
+        }
+
+        #screenshot_grid figure {
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(55, 0, 60, 0.08);
+            border: 1px solid #e6e6e6;
+        }
+
+        #screenshot_grid img {
+            width: 100%;
+            display: block;
+        }
+
+        #screenshot_grid figcaption {
+            padding: 0.7em 0.9em;
+            font-size: 0.82em;
+            color: #37003c;
+            font-weight: 600;
+        }
+
+        /* How It Was Built Steps */
+        #build_steps {
+            list-style: none;
+            counter-reset: step_counter;
+        }
+
+        #build_steps li {
+            counter-increment: step_counter;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 1em 1.25em 1em 3.5em;
+            margin-bottom: 0.7em;
+            position: relative;
+            box-shadow: 0 1px 4px rgba(55, 0, 60, 0.08);
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        #build_steps li::before {
+            content: counter(step_counter);
+            position: absolute;
+            left: 1em;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.7em;
+            height: 1.7em;
+            background-color: #00ff87;
+            color: #37003c;
+            border-radius: 50%;
+            font-family: "Barlow Condensed", sans-serif;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .readme_note {
+            font-size: 0.9em;
+            color: #777777;
+            font-style: italic;
+            margin: 1em 0 1.5em;
+        }
+
+        /* Buttons */
+        #action_buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75em;
+        }
+
+        .action_btn {
+            display: inline-block;
+            padding: 0.8em 1.6em;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9em;
+            font-family: "Barlow Condensed", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .action_btn.primary_btn {
+            background-color: #00ff87;
+            color: #37003c;
+        }
+
+        .action_btn.secondary_btn {
+            background-color: #37003c;
+            color: #ffffff;
+        }
+
+        .action_btn:hover {
+            opacity: 0.88;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #37003c;
+            color: #b8a6bd;
+            text-align: center;
+            padding: 2em 1.5em;
+            font-size: 0.85em;
+        }
+
+        footer .footer_highlight {
+            color: #00ff87;
+        }
+
+        /* Mobile */
+        @media screen and (max-width: 900px) {
+            #kpi_row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            #era_cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .two_columns {
+                grid-template-columns: 1fr;
+            }
+
+            .three_columns {
+                grid-template-columns: 1fr;
+            }
+
+            #leader_cards {
+                grid-template-columns: 1fr;
+            }
+
+            #screenshot_grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            #hero h1 {
+                font-size: 2.3em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div id="top_bar">
+        <div class="site_name">Referee Bias <span>FPL</span></div>
+        <a href="https://github.com/Farhan2k05">&larr; Back to portfolio</a>
+    </div>
+
+    <!-- Sticky Sub Navigation -->
+    <nav id="sub_nav">
+        <ul>
+            <li><a href="#headline" class="active">Headline</a></li>
+            <li><a href="#eras">Eras</a></li>
+            <li><a href="#leaders">Leaders</a></li>
+            <li><a href="#compare">Compare</a></li>
+            <li><a href="#audit">Referee Audit</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#how">How</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <div id="hero">
+        <div id="hero_stripes"></div>
+        <div id="hero_inner">
+            <span class="tag">The Ghost Game Experiment</span>
+            <h1>Do the fans make referees <span class="mint">cheat?</span></h1>
+            <p>Ten seasons of Premier League data, one question: does crowd pressure change referee decisions? The 2020/21 COVID season, played in empty stadiums, is the natural experiment that answers it.</p>
+            <div id="hero_stats">
+                <div class="stat_item">
+                    <span class="stat_number" data-target="3800">0</span>
+                    <span class="stat_label">Matches</span>
+                </div>
+                <div class="stat_item">
+                    <span class="stat_number" data-target="10">0</span>
+                    <span class="stat_label">Seasons</span>
+                </div>
+                <div class="stat_item">
+                    <span class="stat_number" data-target="33">0</span>
+                    <span class="stat_label">Referees</span>
+                </div>
+                <div class="stat_item">
+                    <span class="stat_number" data-target="4">0</span>
+                    <span class="stat_label">Eras</span>
+                </div>
+            </div>
+            <div id="tech_tags">
+                <span>Python</span>
+                <span>PostgreSQL</span>
+                <span>SQL</span>
+                <span>Power BI</span>
+                <span>Supabase</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content_shell">
+        <div id="content_wrap">
+
+            <!-- Explainer -->
+            <div id="explainer">
+                <p><strong>New to football?</strong> A referee makes live decisions that affect who wins. A foul is when a referee penalises a player for an illegal challenge. This project checks whether referees give the home team fewer fouls when their fans are watching.</p>
+                <p><strong>Foul delta</strong> = away fouls minus home fouls per match. Positive means the away team got penalised more, so the home side got the easier ride. If referees were fair, this would sit near zero across thousands of matches. It does not.</p>
+            </div>
+
+            <!-- Headline Finding -->
+            <section class="page_section" id="headline">
+                <div class="section_header">
+                    <div class="green_bar"></div>
+                    <h2>The Headline Finding</h2>
+                </div>
+                <p class="section_intro">In the one season with no fans, the foul delta flipped negative and home win rate hit its lowest point in the dataset. When fans returned, both bounced back.</p>
+                <div id="kpi_row">
+                    <div class="kpi_card positive">
+                        <span class="kpi_value">+0.27</span>
+                        <span class="kpi_label">Foul delta, all seasons</span>
+                    </div>
+                    <div class="kpi_card negative">
+                        <span class="kpi_value">-0.67</span>
+                        <span class="kpi_label">Foul delta, no fans</span>
+                    </div>
+                    <div class="kpi_card positive">
+                        <span class="kpi_value">44.6%</span>
+                        <span class="kpi_label">Home wins, all seasons</span>
+                    </div>
+                    <div class="kpi_card negative">
+                        <span class="kpi_value">37.9%</span>
+                        <span class="kpi_label">Home wins, no fans</span>
+                    </div>
+                </div>
+                <div class="white_card">
+                    <h3>Foul delta per season</h3>
+                    <p class="card_note">Every season points up except 2020/21, the one with no fans.</p>
+                    <div class="chart_container">
+                        <canvas id="season_chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- The Four Eras -->
+            <section class="page_section" id="eras">
+                <div class="section_header">
+                    <div class="green_bar"></div>
+                    <h2>The Four Eras</h2>
+                </div>
+                <div id="era_cards">
+                    <div class="era_card">
+                        <div class="era_top">
+                            <h3>Pre-VAR</h3>
+                            <div class="era_years">2016/17 - 2018/19</div>
+                        </div>
+                        <div class="era_body">
+                            <div class="era_row">
+                                <span class="row_label">Foul delta</span>
+                                <span class="row_value positive">+0.34</span>
+                            </div>
+                            <div class="era_row">
+                                <span class="row_label">Home wins</span>
+                                <span class="row_value">47.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="era_card">
+                        <div class="era_top">
+                            <h3>VAR Intro</h3>
+                            <div class="era_years">2019/20</div>
+                        </div>
+                        <div class="era_body">
+                            <div class="era_row">
+                                <span class="row_label">Foul delta</span>
+                                <span class="row_value positive">+0.50</span>
+                            </div>
+                            <div class="era_row">
+                                <span class="row_label">Home wins</span>
+                                <span class="row_value">45.3%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="era_card ghost_game">
+                        <div class="era_top">
+                            <h3>Ghost Game</h3>
+                            <div class="era_years">2020/21 - no fans</div>
+                        </div>
+                        <div class="era_body">
+                            <div class="era_row">
+                                <span class="row_label">Foul delta</span>
+                                <span class="row_value negative">-0.67</span>
+                            </div>
+                            <div class="era_row">
+                                <span class="row_label">Home wins</span>
+                                <span class="row_value negative">37.9%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="era_card">
+                        <div class="era_top">
+                            <h3>Post-VAR</h3>
+                            <div class="era_years">2021/22 onwards</div>
+                        </div>
+                        <div class="era_body">
+                            <div class="era_row">
+                                <span class="row_label">Foul delta</span>
+                                <span class="row_value positive">+0.37</span>
+                            </div>
+                            <div class="era_row">
+                                <span class="row_label">Home wins</span>
+                                <span class="row_value">44.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="two_columns">
+                    <div class="white_card">
+                        <h3>Home win rate by era</h3>
+                        <div class="chart_container small">
+                            <canvas id="win_chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="white_card">
+                        <h3>Yellow card delta by era</h3>
+                        <div class="chart_container small">
+                            <canvas id="card_chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stat Leaders -->
+            <section class="page_section" id="leaders">
+                <div class="section_header">
+                    <div class="green_bar"></div>
+                    <h2>Most Home-Biased Referees</h2>
+                </div>
+                <p class="section_intro">The three referees with the highest average foul delta, among those with 40 or more matches.</p>
+                <div id="leader_cards"></div>
+            </section>
+
+            <!-- Compare Referees -->
+            <section class="page_section" id="compare">
+                <div class="section_header">
+                    <div class="green_bar"></div>
+                    <h2>Compare Referees</h2>
+                </div>
+                <p class="section_intro">Pick any two referees to see their bias stats head to head. The greener number is the more home-biased of the two.</p>
+                <div id="compare_widget">
+                    <div id="compare_selectors">
+                        <select id="select_ref_a"></select>
+                        <div class="vs_label">V</div>
+                        <select id="select_ref_b"></select>
+                    </div>
+                    <div id="compare_rows"></div>
+                </div>
+            </section>
+
+            <!-- Full Referee Audit -->
+            <section class="page_section" id="audit">
+                <div class="section_header">
+                    <div class="green_bar"></div>
+                    <h2>Full Referee Audit</h2>
+                </div>
+                <p class="section_intro">Average foul delta for every referee with 20 or more matches. The bar shows bias direction: right of centre is home bias, left is away bias.</p>
+                <div class="white_card">
+                    <div id="ref_table_wrap">
+                        <table id="ref_table">
+                            <thead>
+                                <tr>
+                                    <th>Referee</th>
+                                    <th>Matches</th>
+                                    <th>Foul delta</th>
+                                    <th>Bias</th>
+                                    <th>Verdict</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ref_table_body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard -->
+            <section class="page_section" id="dashboard">
+                <div class="section_header">
+                    <div class="green_bar"></div>
+                    <h2>The Dashboard</h2>
+                </div>
+                <p class="section_intro">Built on a PostgreSQL database hosted on Supabase. Three pages, fully interactive in Power BI Desktop.</p>
+                <div id="screenshot_grid">
+                    <figure>
+                        <img src="screenshots/page1-macro.png" alt="Page 1 macro view">
+                        <figcaption>Page 1: macro view and KPIs</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="screenshots/page2-referee-audit.png" alt="Page 2 referee audit">
+                        <figcaption>Page 2: referee audit with filter</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="screenshots/page3-ghost-game.png" alt="Page 3 ghost game">
+                        <figcaption>Page 3: the Ghost Game analysis</figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <!-- How It Was Built -->
+            <section class="page_section" id="how">
+                <div class="section_header">
+                    <div class="green_bar"></div>
+                    <h2>How It Was Built</h2>
+                </div>
+                <ol id="build_steps">
+                    <li>A Python script loads 10 CSV files, tags each with a season and era, and pushes them into PostgreSQL.</li>
+                    <li>SQL queries calculate foul delta, card delta, home win rate, and per-referee stats.</li>
+                    <li>Power BI connects to the database and visualises the findings across three pages.</li>
+                </ol>
+                <p class="readme_note">Full setup steps, SQL explanations and methodology are in the technical README on GitHub.</p>
+                <div id="action_buttons">
+                    <a class="action_btn primary_btn" href="epl-referee-bias.pdf" download>Download Dashboard (PDF)</a>
+                    <a class="action_btn secondary_btn" href="https://github.com/Farhan2k05/Premier-League-Referee-Bias">Technical README</a>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>Farhan Islam 2026 <span class="footer_highlight">&copy;</span> &nbsp;|&nbsp; Data: football-data.co.uk &nbsp;|&nbsp; A personal project, not affiliated with the Premier League</p>
+    </footer>
+
+    <script>
+
+        /* Data */
+
+        let season_data = [
+            { label: "2016/17", value: 0.595, colour: "#00c853" },
+            { label: "2017/18", value: 0.266, colour: "#00c853" },
+            { label: "2018/19", value: 0.153, colour: "#00c853" },
+            { label: "2019/20", value: 0.497, colour: "#ffb300" },
+            { label: "2020/21", value: -0.674, colour: "#e90052" },
+            { label: "2021/22", value: 0.103, colour: "#37003c" },
+            { label: "2022/23", value: 0.334, colour: "#37003c" },
+            { label: "2023/24", value: 0.603, colour: "#37003c" },
+            { label: "2024/25", value: 0.487, colour: "#37003c" },
+            { label: "2025/26", value: 0.337, colour: "#37003c" }
+        ];
+
+        let era_data = [
+            { label: "Pre-VAR",    win_pct: 47.5, card_delta: 0.129 },
+            { label: "VAR Intro",  win_pct: 45.3, card_delta: 0.179 },
+            { label: "Ghost Game", win_pct: 37.9, card_delta: 0.024 },
+            { label: "Post-VAR",   win_pct: 44.2, card_delta: 0.269 }
+        ];
+
+        let era_colours = ["#00c853", "#ffb300", "#e90052", "#37003c"];
+
+        let ref_data = [
+            { name: "T Bramall",     matches: 52,  foul_delta: 1.731 },
+            { name: "R Madley",      matches: 50,  foul_delta: 1.440 },
+            { name: "G Scott",       matches: 100, foul_delta: 1.200 },
+            { name: "N Swarbrick",   matches: 44,  foul_delta: 0.909 },
+            { name: "M Atkinson",    matches: 168, foul_delta: 0.827 },
+            { name: "A Madley",      matches: 133, foul_delta: 0.842 },
+            { name: "L Mason",       matches: 83,  foul_delta: 0.819 },
+            { name: "D Coote",       matches: 112, foul_delta: 0.768 },
+            { name: "T Harrington",  matches: 48,  foul_delta: 0.708 },
+            { name: "R Jones",       matches: 110, foul_delta: 0.664 },
+            { name: "J Brooks",      matches: 74,  foul_delta: 0.608 },
+            { name: "P Bankes",      matches: 115, foul_delta: 0.548 },
+            { name: "M Salisbury",   matches: 61,  foul_delta: 0.541 },
+            { name: "D England",     matches: 99,  foul_delta: 0.495 },
+            { name: "R East",        matches: 39,  foul_delta: 0.359 },
+            { name: "C Kavanagh",    matches: 193, foul_delta: 0.342 },
+            { name: "S Hooper",      matches: 139, foul_delta: 0.324 },
+            { name: "P Tierney",     matches: 190, foul_delta: 0.268 },
+            { name: "T Robinson",    matches: 49,  foul_delta: 0.163 },
+            { name: "A Marriner",    matches: 164, foul_delta: 0.152 },
+            { name: "M Dean",        matches: 162, foul_delta: 0.136 },
+            { name: "C Pawson",      matches: 229, foul_delta: 0.096 },
+            { name: "M Oliver",      matches: 287, foul_delta: 0.056 },
+            { name: "K Friend",      matches: 136, foul_delta: 0.051 },
+            { name: "M Jones",       matches: 30,  foul_delta: 0.000 },
+            { name: "J Moss",        matches: 160, foul_delta: -0.156 },
+            { name: "J Gillett",     matches: 84,  foul_delta: -0.226 },
+            { name: "S Barrott",     matches: 62,  foul_delta: -0.258 },
+            { name: "A Taylor",      matches: 295, foul_delta: -0.264 },
+            { name: "S Attwell",     matches: 195, foul_delta: -0.338 },
+            { name: "D Bond",        matches: 23,  foul_delta: -0.478 },
+            { name: "L Probert",     matches: 36,  foul_delta: -0.806 },
+            { name: "M Clattenburg", matches: 22,  foul_delta: -1.136 }
+        ];
+
+        let max_delta = 0;
+        for (let i = 0; i < ref_data.length; i++) {
+            if (Math.abs(ref_data[i].foul_delta) > max_delta) {
+                max_delta = Math.abs(ref_data[i].foul_delta);
+            }
+        }
+
+        function format_delta(value) {
+            if (value >= 0) {
+                return "+" + value.toFixed(3);
+            }
+            return value.toFixed(3);
+        }
+
+        // console.log(ref_data);
+
+        /* Charts */
+
+        if (typeof Chart !== "undefined") {
+
+            Chart.defaults.font.family = '"Barlow", sans-serif';
+            Chart.defaults.color = "#777777";
+
+            /* Season foul delta chart */
+            let season_labels = [];
+            let season_values = [];
+            let season_colours = [];
+
+            for (let i = 0; i < season_data.length; i++) {
+                season_labels.push(season_data[i].label);
+                season_values.push(season_data[i].value);
+                season_colours.push(season_data[i].colour);
+            }
+
+            new Chart(document.getElementById("season_chart"), {
+                type: "bar",
+                data: {
+                    labels: season_labels,
+                    datasets: [{
+                        data: season_values,
+                        backgroundColor: season_colours,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return "Foul delta: " + format_delta(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return format_delta(value);
+                                }
+                            },
+                            grid: { color: "#eeeeee" }
+                        }
+                    }
+                }
+            });
+
+            /* Home win rate by era chart */
+            let era_labels = [];
+            let era_wins = [];
+
+            for (let i = 0; i < era_data.length; i++) {
+                era_labels.push(era_data[i].label);
+                era_wins.push(era_data[i].win_pct);
+            }
+
+            new Chart(document.getElementById("win_chart"), {
+                type: "bar",
+                data: {
+                    labels: era_labels,
+                    datasets: [{
+                        data: era_wins,
+                        backgroundColor: era_colours,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + "%";
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            min: 30,
+                            max: 55,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + "%";
+                                }
+                            },
+                            grid: { color: "#eeeeee" }
+                        }
+                    }
+                }
+            });
+
+            /* Yellow card delta by era chart */
+            let era_cards = [];
+
+            for (let i = 0; i < era_data.length; i++) {
+                era_cards.push(era_data[i].card_delta);
+            }
+
+            new Chart(document.getElementById("card_chart"), {
+                type: "bar",
+                data: {
+                    labels: era_labels,
+                    datasets: [{
+                        data: era_cards,
+                        backgroundColor: era_colours,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return "Card delta: " + format_delta(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return format_delta(value);
+                                }
+                            },
+                            grid: { color: "#eeeeee" }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        /* Leader Cards */
+
+        let qualified_refs = [];
+        for (let i = 0; i < ref_data.length; i++) {
+            if (ref_data[i].matches >= 40) {
+                qualified_refs.push(ref_data[i]);
+            }
+        }
+
+        qualified_refs.sort(function(a, b) {
+            return b.foul_delta - a.foul_delta;
+        });
+
+        let top_three = qualified_refs.slice(0, 3);
+        let rank_labels = ["1st Most Home-Biased", "2nd Most Home-Biased", "3rd Most Home-Biased"];
+        let leader_html = "";
+
+        for (let i = 0; i < top_three.length; i++) {
+            let ref = top_three[i];
+            leader_html += '<div class="leader_card">';
+            leader_html += '<div class="leader_rank">' + rank_labels[i] + '</div>';
+            leader_html += '<div class="leader_name">' + ref.name + '</div>';
+            leader_html += '<div class="leader_stat">' + format_delta(ref.foul_delta) + '</div>';
+            leader_html += '<div class="leader_sub">avg foul delta over ' + ref.matches + ' matches</div>';
+            leader_html += '</div>';
+        }
+
+        document.getElementById("leader_cards").innerHTML = leader_html;
+
+
+        /* Referee Table */
+
+        let table_html = "";
+
+        for (let i = 0; i < ref_data.length; i++) {
+            let ref = ref_data[i];
+            let delta = ref.foul_delta;
+            let badge_text = "";
+            let badge_class = "";
+            let value_colour = "";
+            let bar_pct = (Math.abs(delta) / max_delta * 50).toFixed(1);
+            let bar_style = "";
+
+            if (delta > 0.5) {
+                badge_text = "Strong home";
+                badge_class = "home_bias";
+                value_colour = "#00a344";
+                bar_style = "left: 50%; width: " + bar_pct + "%; background-color: #00c853;";
+            } else if (delta > 0.1) {
+                badge_text = "Mild home";
+                badge_class = "home_bias";
+                value_colour = "#00a344";
+                bar_style = "left: 50%; width: " + bar_pct + "%; background-color: #00c853;";
+            } else if (delta < -0.2) {
+                badge_text = "Away bias";
+                badge_class = "away_bias";
+                value_colour = "#e90052";
+                bar_style = "right: 50%; width: " + bar_pct + "%; background-color: #e90052;";
+            } else {
+                badge_text = "Neutral";
+                badge_class = "neutral_verdict";
+                value_colour = "#999999";
+                bar_style = "left: 50%; width: " + bar_pct + "%; background-color: #aaaaaa;";
+            }
+
+            table_html += '<tr>';
+            table_html += '<td>' + ref.name + '</td>';
+            table_html += '<td>' + ref.matches + '</td>';
+            table_html += '<td style="font-weight: 700; color: ' + value_colour + ';">' + format_delta(delta) + '</td>';
+            table_html += '<td>';
+            table_html += '<div class="bias_bar_wrap">';
+            table_html += '<div class="bias_bar">';
+            table_html += '<div class="bar_mid"></div>';
+            table_html += '<div class="bar_fill" style="' + bar_style + '"></div>';
+            table_html += '</div>';
+            table_html += '</div>';
+            table_html += '</td>';
+            table_html += '<td><span class="verdict_badge ' + badge_class + '">' + badge_text + '</span></td>';
+            table_html += '</tr>';
+        }
+
+        document.getElementById("ref_table_body").innerHTML = table_html;
+
+
+        /* Compare Widget */
+
+        let select_a = document.getElementById("select_ref_a");
+        let select_b = document.getElementById("select_ref_b");
+        let options_html = "";
+
+        for (let i = 0; i < ref_data.length; i++) {
+            options_html += '<option value="' + ref_data[i].name + '">' + ref_data[i].name + '</option>';
+        }
+
+        select_a.innerHTML = options_html;
+        select_b.innerHTML = options_html;
+        select_a.value = "A Taylor";
+        select_b.value = "M Atkinson";
+
+        function draw_comparison() {
+            let ref_a = null;
+            let ref_b = null;
+
+            for (let i = 0; i < ref_data.length; i++) {
+                if (ref_data[i].name === select_a.value) {
+                    ref_a = ref_data[i];
+                }
+                if (ref_data[i].name === select_b.value) {
+                    ref_b = ref_data[i];
+                }
+            }
+
+            let rows = [
+                { label: "Avg foul delta", a_val: ref_a.foul_delta, b_val: ref_b.foul_delta, formatter: format_delta },
+                { label: "Matches refereed", a_val: ref_a.matches, b_val: ref_b.matches, formatter: function(v) { return v; } }
+            ];
+
+            let compare_html = "";
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                let a_class = "loser";
+                let b_class = "loser";
+
+                if (row.a_val > row.b_val) {
+                    a_class = "winner";
+                } else if (row.b_val > row.a_val) {
+                    b_class = "winner";
+                }
+
+                compare_html += '<div class="compare_row">';
+                compare_html += '<div class="compare_value left_val ' + a_class + '">' + row.formatter(row.a_val) + '</div>';
+                compare_html += '<div class="compare_label">' + row.label + '</div>';
+                compare_html += '<div class="compare_value right_val ' + b_class + '">' + row.formatter(row.b_val) + '</div>';
+                compare_html += '</div>';
+            }
+
+            document.getElementById("compare_rows").innerHTML = compare_html;
+        }
+
+        select_a.addEventListener("change", function() { draw_comparison(); });
+        select_b.addEventListener("change", function() { draw_comparison(); });
+        draw_comparison();
+
+
+        /* Count Up Animation */
+
+        let count_up_elements = document.querySelectorAll(".stat_number");
+
+        for (let i = 0; i < count_up_elements.length; i++) {
+            start_count_up(count_up_elements[i]);
+        }
+
+        function start_count_up(element) {
+            let target = parseInt(element.getAttribute("data-target"));
+            let current = 0;
+            let step = Math.ceil(target / 60);
+            let timer = setInterval(function() {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = current.toLocaleString();
+            }, 20);
+        }
+
+
+        /* Sticky Sub Nav */
+
+        let nav_links = document.querySelectorAll("#sub_nav ul li a");
+        let sections = document.querySelectorAll(".page_section");
+
+        window.addEventListener("scroll", function() {
+            let current_section = "";
+
+            for (let i = 0; i < sections.length; i++) {
+                if (window.scrollY >= sections[i].offsetTop - 120) {
+                    current_section = sections[i].id;
+                }
+            }
+
+            for (let i = 0; i < nav_links.length; i++) {
+                nav_links[i].classList.remove("active");
+                if (nav_links[i].getAttribute("href") === "#" + current_section) {
+                    nav_links[i].classList.add("active");
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
